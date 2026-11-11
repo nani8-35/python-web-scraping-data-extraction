@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "checks": [
+    "schema creation",
+    "book/quote persistence",
+    "decimal roundtrip",
+    "idempotent record and run upserts",
+    "final run status"
+  ],
+  "counts": {
+    "books": 25,
+    "quotes": 20,
+    "runs": 2
+  }
+}

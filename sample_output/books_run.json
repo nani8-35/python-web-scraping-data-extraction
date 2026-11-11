@@ -1,0 +1,17 @@
+{
+  "run_id": "b2b05b10-e8fb-4a18-8ea2-6cb60a462e4b",
+  "source": "books",
+  "started_at": "2026-09-21T20:08:58.973991Z",
+  "finished_at": "2026-09-21T20:09:29.080275Z",
+  "pages_processed": 2,
+  "extracted": 25,
+  "accepted": 25,
+  "invalid": 0,
+  "duplicates": 0,
+  "retries": 0,
+  "output_format": "json",
+  "output_path": "sample_output/books_sample.json",
+  "status": "success",
+  "errors": [],
+  "elapsed_seconds": 30.106284
+}

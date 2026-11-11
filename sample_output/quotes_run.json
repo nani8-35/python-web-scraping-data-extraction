@@ -1,0 +1,17 @@
+{
+  "run_id": "1a6232ee-2629-4f43-be6a-f95416b20805",
+  "source": "quotes",
+  "started_at": "2026-09-21T20:10:08.490521Z",
+  "finished_at": "2026-09-21T20:10:14.507945Z",
+  "pages_processed": 2,
+  "extracted": 20,
+  "accepted": 20,
+  "invalid": 0,
+  "duplicates": 0,
+  "retries": 0,
+  "output_format": "json",
+  "output_path": "sample_output/quotes_sample.json",
+  "status": "success",
+  "errors": [],
+  "elapsed_seconds": 6.017424
+}

@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extraction Run Report — Python Web Scraping System</title>
+  <style>
+    :root {
+      --bg-canvas: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --border-subtle: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary-navy: #0f2744;
+      --primary-blue: #2563eb;
+      --primary-blue-light: #eff6ff;
+      --success-green: #15803d;
+      --success-bg: #f0fdf4;
+      --warning-amber: #b45309;
+      --warning-bg: #fffbeb;
+      --danger-red: #b91c1c;
+      --danger-bg: #fef2f2;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .header-left h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-left p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .header-right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+
+    .header-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      transition: transform 0.15s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .kpi-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      line-height: 1.1;
+    }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fafbfd;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary-navy);
+    }
+
+    .card-subtitle {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    .card-footer {
+      padding: 0.75rem 1.5rem;
+      background: #fafbfd;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.8rem;
+    }
+
+    /* Pipeline Flow */
+    .flow-container {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      background: #ffffff;
+    }
+
+    .flow-node {
+      flex: 1;
+      min-width: 110px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .flow-step {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+
+    .flow-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary-navy);
+      margin-bottom: 0.2rem;
+    }
+
+    .flow-desc {
+      font-size: 0.725rem;
+      color: var(--text-muted);
+    }
+
+    .flow-arrow {
+      color: var(--primary-blue);
+      font-size: 1.25rem;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    /* Tech Stack Badges */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .tech-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-blue-light);
+      color: var(--primary-blue);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* Tables */
+    .table-responsive {
+      overflow-x: auto;
+      max-height: 520px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .data-table th {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    .data-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* Specific cells */
+    .cell-num {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      width: 40px;
+    }
+
+    .cell-title {
+      font-weight: 500;
+      max-width: 280px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cell-quote {
+      font-style: italic;
+      max-width: 400px;
+      white-space: normal;
+      line-height: 1.4;
+    }
+
+    .cell-author {
+      white-space: nowrap;
+    }
+
+    .cell-price {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--primary-navy);
+    }
+
+    .cell-url a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+
+    .cell-url a:hover {
+      text-decoration: underline;
+    }
+
+    .cell-time {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .cell-path {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.725rem;
+      font-weight: 600;
+      border-radius: 4px;
+      text-transform: capitalize;
+    }
+
+    .badge-primary {
+      background: var(--primary-blue-light);
+      color: var(--primary-blue);
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid var(--border-color);
+    }
+
+    .badge-success {
+      background: var(--success-bg);
+      color: var(--success-green);
+      border: 1px solid #bbf7d0;
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning-amber);
+      border: 1px solid #fde68a;
+    }
+
+    .badge-danger {
+      background: var(--danger-bg);
+      color: var(--danger-red);
+      border: 1px solid #fecaca;
+    }
+
+    .mono-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: #f1f5f9;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tag-pill {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 12px;
+      margin-right: 0.25rem;
+      margin-bottom: 0.2rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .rating-stars {
+      color: #eab308;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+    }
+
+    .rating-num {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .text-success { color: var(--success-green); }
+    .text-danger { color: var(--danger-red); }
+    .text-muted { color: var(--text-muted); }
+    .text-center { text-align: center; }
+    .font-semibold { font-weight: 600; }
+
+    /* Empty state */
+    .empty-card {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .alert-danger {
+      background: var(--danger-bg);
+      color: var(--danger-red);
+      border: 1px solid #fecaca;
+    }
+
+    .alert ul {
+      margin-top: 0.5rem;
+      margin-left: 1.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 1000px) {
+      .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 768px) {
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .header-right {
+        align-items: flex-start;
+      }
+      .flow-arrow {
+        display: none;
+      }
+      .flow-node {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>Python Web Scraping & Data Extraction System</h1>
+        <p>Production Data Pipeline Run Verification & Dashboard</p>
+      </div>
+      <div class="header-right">
+        <div>
+          <span class="badge badge-success"
+                style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">
+            Run Status: SUCCESS
+          </span>
+        </div>
+        <div class="header-meta">Report Generated: 2026-09-22 08:09:41 UTC</div>
+      </div>
+    </header>
+
+    
+
+    <!-- KPI Summary Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Extracted Records</div>
+        <div class="kpi-value">45</div>
+        <div class="kpi-sub">Total parsed items</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Valid / Accepted</div>
+        <div class="kpi-value text-success">45</div>
+        <div class="kpi-sub">Passed schema validation</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Invalid Records</div>
+        <div class="kpi-value ">0</div>
+        <div class="kpi-sub">Rejected by schema</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Duplicates Dropped</div>
+        <div class="kpi-value">0</div>
+        <div class="kpi-sub">SHA-256 deduplicated</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pages Processed</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-sub">0 bounded retries</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Elapsed Time</div>
+        <div class="kpi-value">36.12s</div>
+        <div class="kpi-sub">Total execution time</div>
+      </div>
+    </section>
+
+    <!-- Architecture & Pipeline Flow Card -->
+    <section class="card">
+      <div class="card-header">
+        <h3 class="card-title">Architecture Pipeline Flow</h3>
+        <span class="card-subtitle">Deterministic 6-Stage Extraction Lifecycle</span>
+      </div>
+      <div class="flow-container">
+        <div class="flow-node">
+          <div class="flow-step">Stage 1</div>
+          <div class="flow-name">Web Sources</div>
+          <div class="flow-desc">Books (Static) / Quotes (JS)</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-step">Stage 2</div>
+          <div class="flow-name">Scraper Engine</div>
+          <div class="flow-desc">Scrapy / Selenium WebDriver</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-step">Stage 3</div>
+          <div class="flow-name">Normalization</div>
+          <div class="flow-desc">Decimal, Rating, Whitespace</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-step">Stage 4</div>
+          <div class="flow-name">Validation</div>
+          <div class="flow-desc">Pydantic v2 Typed Schemas</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-step">Stage 5</div>
+          <div class="flow-name">Deduplication</div>
+          <div class="flow-desc">SHA-256 Fingerprint Filter</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-step">Stage 6</div>
+          <div class="flow-name">Exporters</div>
+          <div class="flow-desc">CSV / JSON / PostgreSQL</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Runs Overview Card -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h3 class="card-title">Execution Runs</h3>
+          <span class="badge badge-primary">2 Runs</span>
+        </div>
+        <span class="card-subtitle">Source targets, processing metrics, and destinations</span>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Run ID</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Started</th>
+              <th>Pages</th>
+              <th>Extracted</th>
+              <th>Accepted</th>
+              <th>Invalid</th>
+              <th>Dups</th>
+              <th>Retries</th>
+              <th>Elapsed</th>
+              <th>Format</th>
+              <th>Destination Path</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+  <td class="cell-num">1</td>
+  <td><span class="mono-badge">b2b05b10...</span></td>
+  <td><strong>books</strong></td>
+  <td><span class="badge badge-success">success</span></td>
+  <td class="cell-time">2026-09-21 20:08:58 UTC</td>
+  <td>2</td>
+  <td>25</td>
+  <td class="text-success font-semibold">25</td>
+  <td class="">0</td>
+  <td>0</td>
+  <td>0</td>
+  <td>30.11s</td>
+  <td><span class="badge badge-secondary">JSON</span></td>
+  <td class="cell-path" title="sample_output/books_sample.json">sample_output/books_sample.json</td>
+</tr>
+<tr>
+  <td class="cell-num">2</td>
+  <td><span class="mono-badge">1a6232ee...</span></td>
+  <td><strong>quotes</strong></td>
+  <td><span class="badge badge-success">success</span></td>
+  <td class="cell-time">2026-09-21 20:10:08 UTC</td>
+  <td>2</td>
+  <td>20</td>
+  <td class="text-success font-semibold">20</td>
+  <td class="">0</td>
+  <td>0</td>
+  <td>0</td>
+  <td>6.02s</td>
+  <td><span class="badge badge-secondary">JSON</span></td>
+  <td class="cell-path" title="sample_output/quotes_sample.json">sample_output/quotes_sample.json</td>
+</tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sample Data Tables -->
+    
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-group">
+      <h3 class="card-title">Extracted Books Sample</h3>
+      <span class="badge badge-primary">25 records</span>
+    </div>
+    <span class="card-subtitle">Source: books.toscrape.com (Static Scrapy Extraction)</span>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Rating</th>
+          <th>Availability</th>
+          <th>Product URL</th>
+          <th>Scraped At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+  <td class="cell-num">1</td>
+  <td class="cell-title" title="In Her Wake">In Her Wake</td>
+  <td class="cell-category"><span class="badge badge-secondary">Thriller</span></td>
+  <td class="cell-price">£12.84</td>
+  <td class="cell-rating"><span class="rating-stars" title="1 of 5 stars">★☆☆☆☆</span> <span class="rating-num">(1/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/in-her-wake_980/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:24.823335Z</td>
+</tr>
+<tr>
+  <td class="cell-num">2</td>
+  <td class="cell-title" title="Soumission">Soumission</td>
+  <td class="cell-category"><span class="badge badge-secondary">Fiction</span></td>
+  <td class="cell-price">£50.10</td>
+  <td class="cell-rating"><span class="rating-stars" title="1 of 5 stars">★☆☆☆☆</span> <span class="rating-num">(1/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (20 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/soumission_998/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:05.800313Z</td>
+</tr>
+<tr>
+  <td class="cell-num">3</td>
+  <td class="cell-title" title="It&#x27;s Only the Himalayas">It&#x27;s Only the Himalayas</td>
+  <td class="cell-category"><span class="badge badge-secondary">Travel</span></td>
+  <td class="cell-price">£45.17</td>
+  <td class="cell-rating"><span class="rating-stars" title="2 of 5 stars">★★☆☆☆</span> <span class="rating-num">(2/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/its-only-the-himalayas_981/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:22.816843Z</td>
+</tr>
+<tr>
+  <td class="cell-num">4</td>
+  <td class="cell-title" title="Sapiens: A Brief History of Humankind">Sapiens: A Brief History of Humankind</td>
+  <td class="cell-category"><span class="badge badge-secondary">History</span></td>
+  <td class="cell-price">£54.23</td>
+  <td class="cell-rating"><span class="rating-stars" title="5 of 5 stars">★★★★★</span> <span class="rating-num">(5/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (20 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/sapiens-a-brief-history-of-humankind_996/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:07.798749Z</td>
+</tr>
+<tr>
+  <td class="cell-num">5</td>
+  <td class="cell-title" title="Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991">Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991</td>
+  <td class="cell-category"><span class="badge badge-secondary">Music</span></td>
+  <td class="cell-price">£57.25</td>
+  <td class="cell-rating"><span class="rating-stars" title="3 of 5 stars">★★★☆☆</span> <span class="rating-num">(3/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/our-band-could-be-your-life-scenes-from-the-american-indie-underground-1981-1991_985/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:18.812034Z</td>
+</tr>
+<tr>
+  <td class="cell-num">6</td>
+  <td class="cell-title" title="Tipping the Velvet">Tipping the Velvet</td>
+  <td class="cell-category"><span class="badge badge-secondary">Historical Fiction</span></td>
+  <td class="cell-price">£53.74</td>
+  <td class="cell-rating"><span class="rating-stars" title="1 of 5 stars">★☆☆☆☆</span> <span class="rating-num">(1/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (20 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/tipping-the-velvet_999/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:04.795181Z</td>
+</tr>
+<tr>
+  <td class="cell-num">7</td>
+  <td class="cell-title" title="The Dirty Little Secrets of Getting Your Dream Job">The Dirty Little Secrets of Getting Your Dream Job</td>
+  <td class="cell-category"><span class="badge badge-secondary">Business</span></td>
+  <td class="cell-price">£33.34</td>
+  <td class="cell-rating"><span class="rating-stars" title="4 of 5 stars">★★★★☆</span> <span class="rating-num">(4/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/the-dirty-little-secrets-of-getting-your-dream-job_994/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:09.807470Z</td>
+</tr>
+<tr>
+  <td class="cell-num">8</td>
+  <td class="cell-title" title="Rip it Up and Start Again">Rip it Up and Start Again</td>
+  <td class="cell-category"><span class="badge badge-secondary">Music</span></td>
+  <td class="cell-price">£35.02</td>
+  <td class="cell-rating"><span class="rating-stars" title="5 of 5 stars">★★★★★</span> <span class="rating-num">(5/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/rip-it-up-and-start-again_986/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:17.816915Z</td>
+</tr>
+<tr>
+  <td class="cell-num">9</td>
+  <td class="cell-title" title="Set Me Free">Set Me Free</td>
+  <td class="cell-category"><span class="badge badge-secondary">Young Adult</span></td>
+  <td class="cell-price">£17.46</td>
+  <td class="cell-rating"><span class="rating-stars" title="5 of 5 stars">★★★★★</span> <span class="rating-num">(5/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/set-me-free_988/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:15.813218Z</td>
+</tr>
+<tr>
+  <td class="cell-num">10</td>
+  <td class="cell-title" title="A Light in the Attic">A Light in the Attic</td>
+  <td class="cell-category"><span class="badge badge-secondary">Poetry</span></td>
+  <td class="cell-price">£51.77</td>
+  <td class="cell-rating"><span class="rating-stars" title="3 of 5 stars">★★★☆☆</span> <span class="rating-num">(3/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (22 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:03.809945Z</td>
+</tr>
+<tr>
+  <td class="cell-num">11</td>
+  <td class="cell-title" title="Starving Hearts (Triangular Trade Trilogy, #1)">Starving Hearts (Triangular Trade Trilogy, #1)</td>
+  <td class="cell-category"><span class="badge badge-secondary">Default</span></td>
+  <td class="cell-price">£13.99</td>
+  <td class="cell-rating"><span class="rating-stars" title="2 of 5 stars">★★☆☆☆</span> <span class="rating-num">(2/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/starving-hearts-triangular-trade-trilogy-1_990/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:13.809819Z</td>
+</tr>
+<tr>
+  <td class="cell-num">12</td>
+  <td class="cell-title" title="Shakespeare&#x27;s Sonnets">Shakespeare&#x27;s Sonnets</td>
+  <td class="cell-category"><span class="badge badge-secondary">Poetry</span></td>
+  <td class="cell-price">£20.66</td>
+  <td class="cell-rating"><span class="rating-stars" title="4 of 5 stars">★★★★☆</span> <span class="rating-num">(4/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/shakespeares-sonnets_989/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:14.812613Z</td>
+</tr>
+<tr>
+  <td class="cell-num">13</td>
+  <td class="cell-title" title="Scott Pilgrim&#x27;s Precious Little Life (Scott Pilgrim #1)">Scott Pilgrim&#x27;s Precious Little Life (Scott Pilgrim #1)</td>
+  <td class="cell-category"><span class="badge badge-secondary">Sequential Art</span></td>
+  <td class="cell-price">£52.29</td>
+  <td class="cell-rating"><span class="rating-stars" title="5 of 5 stars">★★★★★</span> <span class="rating-num">(5/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/scott-pilgrims-precious-little-life-scott-pilgrim-1_987/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:16.811802Z</td>
+</tr>
+<tr>
+  <td class="cell-num">14</td>
+  <td class="cell-title" title="Foolproof Preserving: A Guide to Small Batch Jams, Jellies, Pickles, Condiments, and More: A Foolproof Guide to Making Small Batch Jams, Jellies, Pickles, Condiments, and More">Foolproof Preserving: A Guide to Small Batch Jams, Jellies, Pickles, Condiments, and More: A Foolproof Guide to Making Small Batch Jams, Jellies, Pickles, Condiments, and More</td>
+  <td class="cell-category"><span class="badge badge-secondary">Food and Drink</span></td>
+  <td class="cell-price">£30.52</td>
+  <td class="cell-rating"><span class="rating-stars" title="3 of 5 stars">★★★☆☆</span> <span class="rating-num">(3/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/foolproof-preserving-a-guide-to-small-batch-jams-jellies-pickles-condiments-and-more-a-foolproof-guide-to-making-small-batch-jams-jellies-pickles-condiments-and-more_978/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:26.825285Z</td>
+</tr>
+<tr>
+  <td class="cell-num">15</td>
+  <td class="cell-title" title="The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics">The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics</td>
+  <td class="cell-category"><span class="badge badge-secondary">Default</span></td>
+  <td class="cell-price">£22.60</td>
+  <td class="cell-rating"><span class="rating-stars" title="4 of 5 stars">★★★★☆</span> <span class="rating-num">(4/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/the-boys-in-the-boat-nine-americans-and-their-epic-quest-for-gold-at-the-1936-berlin-olympics_992/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:11.809638Z</td>
+</tr>
+<tr>
+  <td class="cell-num">16</td>
+  <td class="cell-title" title="How Music Works">How Music Works</td>
+  <td class="cell-category"><span class="badge badge-secondary">Music</span></td>
+  <td class="cell-price">£37.32</td>
+  <td class="cell-rating"><span class="rating-stars" title="2 of 5 stars">★★☆☆☆</span> <span class="rating-num">(2/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/how-music-works_979/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:25.821523Z</td>
+</tr>
+<tr>
+  <td class="cell-num">17</td>
+  <td class="cell-title" title="The Black Maria">The Black Maria</td>
+  <td class="cell-category"><span class="badge badge-secondary">Poetry</span></td>
+  <td class="cell-price">£52.15</td>
+  <td class="cell-rating"><span class="rating-stars" title="1 of 5 stars">★☆☆☆☆</span> <span class="rating-num">(1/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/the-black-maria_991/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:12.809351Z</td>
+</tr>
+<tr>
+  <td class="cell-num">18</td>
+  <td class="cell-title" title="Sharp Objects">Sharp Objects</td>
+  <td class="cell-category"><span class="badge badge-secondary">Mystery</span></td>
+  <td class="cell-price">£47.82</td>
+  <td class="cell-rating"><span class="rating-stars" title="4 of 5 stars">★★★★☆</span> <span class="rating-num">(4/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (20 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/sharp-objects_997/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:06.803076Z</td>
+</tr>
+<tr>
+  <td class="cell-num">19</td>
+  <td class="cell-title" title="Libertarianism for Beginners">Libertarianism for Beginners</td>
+  <td class="cell-category"><span class="badge badge-secondary">Politics</span></td>
+  <td class="cell-price">£51.33</td>
+  <td class="cell-rating"><span class="rating-stars" title="2 of 5 stars">★★☆☆☆</span> <span class="rating-num">(2/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:21.815375Z</td>
+</tr>
+<tr>
+  <td class="cell-num">20</td>
+  <td class="cell-title" title="The Requiem Red">The Requiem Red</td>
+  <td class="cell-category"><span class="badge badge-secondary">Young Adult</span></td>
+  <td class="cell-price">£22.65</td>
+  <td class="cell-rating"><span class="rating-stars" title="1 of 5 stars">★☆☆☆☆</span> <span class="rating-num">(1/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/the-requiem-red_995/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:08.797948Z</td>
+</tr>
+<tr>
+  <td class="cell-num">21</td>
+  <td class="cell-title" title="Black Dust">Black Dust</td>
+  <td class="cell-category"><span class="badge badge-secondary">Romance</span></td>
+  <td class="cell-price">£34.53</td>
+  <td class="cell-rating"><span class="rating-stars" title="5 of 5 stars">★★★★★</span> <span class="rating-num">(5/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/black-dust_976/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:28.839736Z</td>
+</tr>
+<tr>
+  <td class="cell-num">22</td>
+  <td class="cell-title" title="Olio">Olio</td>
+  <td class="cell-category"><span class="badge badge-secondary">Poetry</span></td>
+  <td class="cell-price">£23.88</td>
+  <td class="cell-rating"><span class="rating-stars" title="1 of 5 stars">★☆☆☆☆</span> <span class="rating-num">(1/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/olio_984/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:19.836679Z</td>
+</tr>
+<tr>
+  <td class="cell-num">23</td>
+  <td class="cell-title" title="The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull">The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull</td>
+  <td class="cell-category"><span class="badge badge-secondary">Default</span></td>
+  <td class="cell-price">£17.93</td>
+  <td class="cell-rating"><span class="rating-stars" title="3 of 5 stars">★★★☆☆</span> <span class="rating-num">(3/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:10.807015Z</td>
+</tr>
+<tr>
+  <td class="cell-num">24</td>
+  <td class="cell-title" title="Mesaerion: The Best Science Fiction Stories 1800-1849">Mesaerion: The Best Science Fiction Stories 1800-1849</td>
+  <td class="cell-category"><span class="badge badge-secondary">Science Fiction</span></td>
+  <td class="cell-price">£37.59</td>
+  <td class="cell-rating"><span class="rating-stars" title="1 of 5 stars">★☆☆☆☆</span> <span class="rating-num">(1/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:20.812578Z</td>
+</tr>
+<tr>
+  <td class="cell-num">25</td>
+  <td class="cell-title" title="Chase Me (Paris Nights #2)">Chase Me (Paris Nights #2)</td>
+  <td class="cell-category"><span class="badge badge-secondary">Romance</span></td>
+  <td class="cell-price">£25.27</td>
+  <td class="cell-rating"><span class="rating-stars" title="5 of 5 stars">★★★★★</span> <span class="rating-num">(5/5)</span></td>
+  <td class="cell-avail"><span class="badge badge-success">In stock (19 available)</span></td>
+  <td class="cell-url">
+    <a href="https://books.toscrape.com/catalogue/chase-me-paris-nights-2_977/index.html" target="_blank" rel="noopener noreferrer">View Product ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:09:27.823152Z</td>
+</tr>
+      </tbody>
+    </table>
+  </div>
+  
+</div>
+
+    
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-group">
+      <h3 class="card-title">Extracted Quotes Sample</h3>
+      <span class="badge badge-primary">20 records</span>
+    </div>
+    <span class="card-subtitle">Source: quotes.toscrape.com/js/ (Selenium JS Extraction)</span>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Quote</th>
+          <th>Author</th>
+          <th>Tags</th>
+          <th>Source URL</th>
+          <th>Scraped At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+  <td class="cell-num">1</td>
+  <td class="cell-quote">"“It is not a lack of love, but a lack of friendship that makes unhappy marriages.”"</td>
+  <td class="cell-author"><strong>Friedrich Nietzsche</strong></td>
+  <td class="cell-tags"><span class="tag-pill">friendship</span> <span class="tag-pill">lack-of-friendship</span> <span class="tag-pill">lack-of-love</span> <span class="tag-pill">love</span> <span class="tag-pill">marriage</span> <span class="tag-pill">unhappy-marriage</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425445Z</td>
+</tr>
+<tr>
+  <td class="cell-num">2</td>
+  <td class="cell-quote">"“I like nonsense, it wakes up the brain cells. Fantasy is a necessary ingredient in living.”"</td>
+  <td class="cell-author"><strong>Dr. Seuss</strong></td>
+  <td class="cell-tags"><span class="tag-pill">fantasy</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425395Z</td>
+</tr>
+<tr>
+  <td class="cell-num">3</td>
+  <td class="cell-quote">"“The person, be it gentleman or lady, who has not pleasure in a good novel, must be intolerably stupid.”"</td>
+  <td class="cell-author"><strong>Jane Austen</strong></td>
+  <td class="cell-tags"><span class="tag-pill">aliteracy</span> <span class="tag-pill">books</span> <span class="tag-pill">classic</span> <span class="tag-pill">humor</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103486Z</td>
+</tr>
+<tr>
+  <td class="cell-num">4</td>
+  <td class="cell-quote">"“I may not have gone where I intended to go, but I think I have ended up where I needed to be.”"</td>
+  <td class="cell-author"><strong>Douglas Adams</strong></td>
+  <td class="cell-tags"><span class="tag-pill">life</span> <span class="tag-pill">navigation</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425410Z</td>
+</tr>
+<tr>
+  <td class="cell-num">5</td>
+  <td class="cell-quote">"“Try not to become a man of success. Rather become a man of value.”"</td>
+  <td class="cell-author"><strong>Albert Einstein</strong></td>
+  <td class="cell-tags"><span class="tag-pill">adulthood</span> <span class="tag-pill">success</span> <span class="tag-pill">value</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103517Z</td>
+</tr>
+<tr>
+  <td class="cell-num">6</td>
+  <td class="cell-quote">"“Good friends, good books, and a sleepy conscience: this is the ideal life.”"</td>
+  <td class="cell-author"><strong>Mark Twain</strong></td>
+  <td class="cell-tags"><span class="tag-pill">books</span> <span class="tag-pill">contentment</span> <span class="tag-pill">friends</span> <span class="tag-pill">friendship</span> <span class="tag-pill">life</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425460Z</td>
+</tr>
+<tr>
+  <td class="cell-num">7</td>
+  <td class="cell-quote">"“A woman is like a tea bag; you never know how strong it is until it&#x27;s in hot water.”"</td>
+  <td class="cell-author"><strong>Eleanor Roosevelt</strong></td>
+  <td class="cell-tags"><span class="tag-pill">misattributed-eleanor-roosevelt</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103557Z</td>
+</tr>
+<tr>
+  <td class="cell-num">8</td>
+  <td class="cell-quote">"“There are only two ways to live your life. One is as though nothing is a miracle. The other is as though everything is a miracle.”"</td>
+  <td class="cell-author"><strong>Albert Einstein</strong></td>
+  <td class="cell-tags"><span class="tag-pill">inspirational</span> <span class="tag-pill">life</span> <span class="tag-pill">live</span> <span class="tag-pill">miracle</span> <span class="tag-pill">miracles</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103466Z</td>
+</tr>
+<tr>
+  <td class="cell-num">9</td>
+  <td class="cell-quote">"“If you can&#x27;t explain it to a six year old, you don&#x27;t understand it yourself.”"</td>
+  <td class="cell-author"><strong>Albert Einstein</strong></td>
+  <td class="cell-tags"><span class="tag-pill">simplicity</span> <span class="tag-pill">understand</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425354Z</td>
+</tr>
+<tr>
+  <td class="cell-num">10</td>
+  <td class="cell-quote">"“The opposite of love is not hate, it&#x27;s indifference. The opposite of art is not ugliness, it&#x27;s indifference. The opposite of faith is not heresy, it&#x27;s indifference. And the opposite of life is not death, it&#x27;s indifference.”"</td>
+  <td class="cell-author"><strong>Elie Wiesel</strong></td>
+  <td class="cell-tags"><span class="tag-pill">activism</span> <span class="tag-pill">apathy</span> <span class="tag-pill">hate</span> <span class="tag-pill">indifference</span> <span class="tag-pill">inspirational</span> <span class="tag-pill">love</span> <span class="tag-pill">opposite</span> <span class="tag-pill">philosophy</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425424Z</td>
+</tr>
+<tr>
+  <td class="cell-num">11</td>
+  <td class="cell-quote">"“It takes a great deal of bravery to stand up to our enemies, but just as much to stand up to our friends.”"</td>
+  <td class="cell-author"><strong>J.K. Rowling</strong></td>
+  <td class="cell-tags"><span class="tag-pill">courage</span> <span class="tag-pill">friends</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425331Z</td>
+</tr>
+<tr>
+  <td class="cell-num">12</td>
+  <td class="cell-quote">"“It is our choices, Harry, that show what we truly are, far more than our abilities.”"</td>
+  <td class="cell-author"><strong>J.K. Rowling</strong></td>
+  <td class="cell-tags"><span class="tag-pill">abilities</span> <span class="tag-pill">choices</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103434Z</td>
+</tr>
+<tr>
+  <td class="cell-num">13</td>
+  <td class="cell-quote">"“You may not be her first, her last, or her only. She loved before she may love again. But if she loves you now, what else matters? She&#x27;s not perfect—you aren&#x27;t either, and the two of you may never be perfect together but if she can make you laugh, cause you to think twice, and admit to being human and making mistakes, hold onto her and give her the most you can. She may not be thinking about you every second of the day, but she will give you a part of her that she knows you can break—her heart. So don&#x27;t hurt her, don&#x27;t change her, don&#x27;t analyze and don&#x27;t expect more than she can give. Smile when she makes you happy, let her know when she makes you mad, and miss her when she&#x27;s not there.”"</td>
+  <td class="cell-author"><strong>Bob Marley</strong></td>
+  <td class="cell-tags"><span class="tag-pill">love</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425370Z</td>
+</tr>
+<tr>
+  <td class="cell-num">14</td>
+  <td class="cell-quote">"“Imperfection is beauty, madness is genius and it&#x27;s better to be absolutely ridiculous than absolutely boring.”"</td>
+  <td class="cell-author"><strong>Marilyn Monroe</strong></td>
+  <td class="cell-tags"><span class="tag-pill">be-yourself</span> <span class="tag-pill">inspirational</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103502Z</td>
+</tr>
+<tr>
+  <td class="cell-num">15</td>
+  <td class="cell-quote">"“The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.”"</td>
+  <td class="cell-author"><strong>Albert Einstein</strong></td>
+  <td class="cell-tags"><span class="tag-pill">change</span> <span class="tag-pill">deep-thoughts</span> <span class="tag-pill">thinking</span> <span class="tag-pill">world</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.102888Z</td>
+</tr>
+<tr>
+  <td class="cell-num">16</td>
+  <td class="cell-quote">"“I have not failed. I&#x27;ve just found 10,000 ways that won&#x27;t work.”"</td>
+  <td class="cell-author"><strong>Thomas A. Edison</strong></td>
+  <td class="cell-tags"><span class="tag-pill">edison</span> <span class="tag-pill">failure</span> <span class="tag-pill">inspirational</span> <span class="tag-pill">paraphrased</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103544Z</td>
+</tr>
+<tr>
+  <td class="cell-num">17</td>
+  <td class="cell-quote">"“A day without sunshine is like, you know, night.”"</td>
+  <td class="cell-author"><strong>Steve Martin</strong></td>
+  <td class="cell-tags"><span class="tag-pill">humor</span> <span class="tag-pill">obvious</span> <span class="tag-pill">simile</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103570Z</td>
+</tr>
+<tr>
+  <td class="cell-num">18</td>
+  <td class="cell-quote">"“Life is what happens to us while we are making other plans.”"</td>
+  <td class="cell-author"><strong>Allen Saunders</strong></td>
+  <td class="cell-tags"><span class="tag-pill">fate</span> <span class="tag-pill">life</span> <span class="tag-pill">misattributed-john-lennon</span> <span class="tag-pill">planning</span> <span class="tag-pill">plans</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425475Z</td>
+</tr>
+<tr>
+  <td class="cell-num">19</td>
+  <td class="cell-quote">"“This life is what you make it. No matter what, you&#x27;re going to mess up sometimes, it&#x27;s a universal truth. But the good part is you get to decide how you&#x27;re going to mess it up. Girls will be your friends - they&#x27;ll act like it anyway. But just remember, some come, some go. The ones that stay with you through everything - they&#x27;re your true best friends. Don&#x27;t let go of them. Also remember, sisters make the best friends in the world. As for lovers, well, they&#x27;ll come and go too. And baby, I hate to say it, most of them - actually pretty much all of them are going to break your heart, but you can&#x27;t give up because if you give up, you&#x27;ll never find your soulmate. You&#x27;ll never find that half who makes you whole and that goes for everything. Just because you fail once, doesn&#x27;t mean you&#x27;re gonna fail at everything. Keep trying, hold on, and always, always, always believe in yourself, because if you don&#x27;t, then who will, sweetie? So keep your head high, keep your chin up, and most importantly, keep smiling, because life&#x27;s a beautiful thing and there&#x27;s so much to smile about.”"</td>
+  <td class="cell-author"><strong>Marilyn Monroe</strong></td>
+  <td class="cell-tags"><span class="tag-pill">friends</span> <span class="tag-pill">heartbreak</span> <span class="tag-pill">inspirational</span> <span class="tag-pill">life</span> <span class="tag-pill">love</span> <span class="tag-pill">sisters</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/page/2/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:14.425242Z</td>
+</tr>
+<tr>
+  <td class="cell-num">20</td>
+  <td class="cell-quote">"“It is better to be hated for what you are than to be loved for what you are not.”"</td>
+  <td class="cell-author"><strong>André Gide</strong></td>
+  <td class="cell-tags"><span class="tag-pill">life</span> <span class="tag-pill">love</span></td>
+  <td class="cell-url">
+    <a href="https://quotes.toscrape.com/js/" target="_blank" rel="noopener noreferrer">View Source ↗</a>
+  </td>
+  <td class="cell-time">2026-09-21T20:10:13.103531Z</td>
+</tr>
+      </tbody>
+    </table>
+  </div>
+  
+</div>
+
+    
+
+    <!-- Technology Stack Card -->
+    <section class="card">
+      <div class="card-header">
+        <h3 class="card-title">Engineering Stack & Standards</h3>
+        <span class="card-subtitle">Technologies used across the system</span>
+      </div>
+      <div class="stack-grid">
+        <span class="tech-pill">🐍 Python 3.12+</span>
+        <span class="tech-pill">🕷️ Scrapy (Static Crawling)</span>
+        <span class="tech-pill">🌐 Selenium WebDriver (Dynamic JS)</span>
+        <span class="tech-pill">🥣 BeautifulSoup4 (DOM Parsing)</span>
+        <span class="tech-pill">🛡️ Pydantic v2 (Data Validation)</span>
+        <span class="tech-pill">🐘 PostgreSQL & SQLAlchemy (Persistence)</span>
+        <span class="tech-pill">📦 Docker & Docker Compose</span>
+        <span class="tech-pill">🧪 Pytest & HTML Fixtures</span>
+        <span class="tech-pill">⚡ Typer / Click (CLI)</span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Python Web Scraping & Data Extraction System</p>
+      <p style="margin-top: 0.35rem;">
+        Ethical Scraping Practice: Targets public testing sandbox domains with polite pacing.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
